@@ -12,7 +12,7 @@ app.use("/api/auth", authroute);
 app.use("/api/users",userRoute);
 
 
-mongoose.connect("mongodb+srv://dbuser:dbuserpassword@cluster0.olr90jr.mongodb.net/")
+mongoose.connect("")
 .then(console.log("Connected"))
 .catch((err) => console.log(err));
 

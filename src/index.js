@@ -1,30 +1,26 @@
+require('dotenv').config();
 const express = require('express');
+require("./config/db").connect();
+//const connectDB = require('./config/db'); // Import database connection configuration
+
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-const mongoose = require('mongoose');
-const authroute = require("./routes/auth"); //authentication part
-const userRoute = require("./routes/users");
+// Connect to MongoDB
+//connectDB();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Middleware
+//app.use(express.json());
 
-app.use("/api/auth", authroute);
-app.use("/api/users",userRoute);
+// Routes
+//const blogRoutes = require('./routes/blogRoutes');
+// const authRoutes = require('./routes/authRoutes');
 
+// app.use('/api/blogs', blogRoutes);
+// app.use('/api/auth', authRoutes);
 
-mongoose.connect("mongodb+srv://ss988899:OxudUKoCoPGYqIw4@blog.kya3ry2.mongodb.net/")
-.then(console.log("Connected"))
-.catch((err) => console.log(err));
-
-
-
-const blogsRouter = require('./routes/Blogs');
-
-// Register the blogs API routes
-app.use('/blogs', blogsRouter);
-
-
-app.listen("5000", ()=>{
-
-    console.log("Backend is running");
-})
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});

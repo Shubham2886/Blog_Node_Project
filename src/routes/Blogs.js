@@ -7,7 +7,7 @@ const Joi = require('joi');
 const fs = require('fs');
 
 
-const UserBlog = require('../models/UserBlog');
+const UserBlog = require('../models/UserBlog.model');
 
 // Middleware for file upload
 router.use(fileUpload());

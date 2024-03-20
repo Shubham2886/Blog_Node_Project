@@ -15,7 +15,7 @@
   "version": "1.0.0",
   "main": "Index.js",
   "scripts": {
-    "start": "nodemon Index.js"
+    "start": "nodemon src/index.js"
   },
   "author": "",
   "license": "ISC",

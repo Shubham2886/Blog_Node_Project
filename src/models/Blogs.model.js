@@ -21,13 +21,12 @@ const blogSchema = new mongoose.Schema({
     },
     blogstatus: {
         type: String,
-        enum: ['active', 'draft', 'deleted'],
-        default: 'draft'
+        enum: ['active', 'draft', 'deleted'], // Ensure no leading or trailing spaces
+        default: 'active'
     },
     userid: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        type: String,
+         required: true
     },
     lastupdated: {
         type: Date,

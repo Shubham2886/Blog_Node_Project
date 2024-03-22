@@ -1,28 +1,47 @@
 require("dotenv").config();
-const jwt = require('jsonwebtoken');
+const user_jwt = require("jsonwebtoken");
 
-function authenticateToken(req, res, next) {
-    // Get the authorization header from the request
-    const authHeader = req.headers['authorization'];
-    // Retrieve the token from the authorization header
-    const token = authHeader && authHeader.split(' ')[1];
+const verifyToken = (req, res, next) => {
+    // get auth header value
+    const bearerHeader = req.headers['authorization'];
 
-    // If no token is provided, return an unauthorized error
-    if (!token) {
-        return res.status(401).json({ error: 'Access token not provided' });
-    }
+    // check if bearer is undefined
+    if (typeof bearerHeader !== 'undefined') {
+        // Format of token 
+        // Authorization: Bearer <access_token>
+        try {
+            //split at the space
+            const bearer = bearerHeader.split(' ');
+            // get token from array
+            const bearerToken = bearer[1];
+            // set the token 
+            req.token = bearerToken;
+            // next middleware 
 
-    // Verify the token
-    jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
-        if (err) {
-            // If token verification fails, return an unauthorized error
-            return res.status(403).json({ error: 'Invalid access token' });
+            const decoded = user_jwt.verify(bearerToken, process.env.JWT_SECRET, (err, result) => {
+                if (err) {
+                    return "token expried"
+                }
+                return result
+            });
+            if (decoded === "token expried") {
+                return res.status(401).send({ status: "token", message: "Your Token Is Expried Please Login Again!" })
+            }
+            req.user = decoded;
+            res.locals.userPayload = req.user;
+            // return res.json({ payload: req.userdashboard});
+        } catch (error) {
+            res.locals.userPayload = null;
+            return res.status(401).send({ status: "token", message: "Your Token Is Expried Please Login Again!" });
         }
 
-        // If token is valid, attach the decoded token to the request for further processing
-        req.decodedToken = decodedToken;
-        next(); // Proceed to the next middleware or route handler
-    });
-}
+    } else {
+        //forbidden
+        res.locals.userPayload = null;
+        return res.status(403).send({ message: "A token is required for authentication" });
+    }
 
-module.exports = authenticateToken;
+    return next()
+};
+
+module.exports = verifyToken;

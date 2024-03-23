@@ -32,7 +32,7 @@ This is a blog project built using Node.js and Express.js.
 
 2. Install dependencies:
     ```bash
-    cd blog-project
+    cd Blog_Node_Project
     npm install
     ```
 

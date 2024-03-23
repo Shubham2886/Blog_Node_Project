@@ -1,5 +1,6 @@
 const User = require('../models/User.model');
 const LoginLog = require('../models/UserLoginLogs.model');
+const Activity = require('../models/Activity.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
@@ -35,6 +36,13 @@ exports.registerUser = async (req, res) => {
 
         // Save the user to the database
         await user.save();
+
+        const activity = new Activity({
+            userid: user._id,
+            username: user.username, // Assuming `user` is the logged-in user object
+            action: 'register'
+        });
+        await activity.save();
 
         // Create JWT payload
         const payload = {
@@ -115,6 +123,12 @@ exports.loginUser = async (req, res) => {
                     jwt_token: token
                 });
 
+                const activity = new Activity({
+                    userid: user._id,
+                    username: user.username, // Assuming `user` is the logged-in user object
+                    action: 'login'
+                });
+                await activity.save();
                 // Log user login activity
                 const loginLog = new LoginLog({
                     userId: user.id,

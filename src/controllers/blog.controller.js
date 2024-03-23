@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Blog = require('../models/Blogs.model');
 const User = require('../models/User.model');
+const Activity = require('../models/Activity.model');
 const multer = require('multer');
 const path = require('path');
 
@@ -62,6 +63,13 @@ exports.createBlog = async (req, res) => {
                 userid: userId
             });
 
+            const activity = new Activity({
+                userid: user._id, // Assuming `user` is the logged-in user object
+                username: user.username,
+                action: 'blog_create'
+            });
+            await activity.save();
+
             // Save the new blog post to the database
             await newBlog.save();
 
@@ -115,6 +123,12 @@ exports.updateBlog = async (req, res) => {
             if (blogcontent) blog.blogcontent = blogcontent;
             if (blogstatus) blog.blogstatus = blogstatus;
 
+            const activity = new Activity({
+                userid: user._id,
+                username: user.username, // Assuming `user` is the logged-in user object
+                action: 'blog_update'
+            });
+
             // Save the updated blog
             await blog.save();
 
@@ -134,6 +148,8 @@ exports.deleteBlog = async (req, res) => {
         // Extract the blog ID from the request parameters
         const blogId = req.params.id;
 
+        const user = await User.findById(res.locals.userPayload.user.id);
+        
         // Check if the blog exists
         const blog = await Blog.findById(blogId);
         if (!blog) {
@@ -146,6 +162,12 @@ exports.deleteBlog = async (req, res) => {
             return res.status(403).json({ message: 'Unauthorized: You do not have permission to delete this blog' });
         }
 
+        const activity = new Activity({
+            userid: user._id,
+            username: user.username, // Assuming `user` is the logged-in user object
+            action: 'blog_delete'
+        });
+
         // Delete the blog
         await Blog.findByIdAndDelete(blogId);
 
@@ -156,22 +178,59 @@ exports.deleteBlog = async (req, res) => {
     }
 };
 
-// Controller function to get all blogs
+// Controller function to get all blogs with pagination, search filters, and sorting
 exports.getAllBlogs = async (req, res) => {
     try {
-        // Get all blogs
-        const blogs = await Blog.find();
+        // Pagination parameters
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
 
-        // Get the total number of blogs
-        const totalBlogs = blogs.length;
+        // Search filters
+        const { blogtitle, blogcategory } = req.query;
+        const filter = {};
+
+        if (blogtitle) {
+            filter.blogtitle = { $regex: blogtitle, $options: 'i' }; // Case-insensitive search
+        }
+
+        if (blogcategory) {
+            filter.blogcategory = { $regex: blogcategory, $options: 'i' }; // Case-insensitive search
+        }
+
+        // Sorting parameters
+        const { sortField, sortOrder } = req.query;
+        const sortOptions = {};
+
+        if (sortField && sortOrder) {
+            sortOptions[sortField] = sortOrder === 'desc' ? -1 : 1;
+        } else {
+            // Default sorting by lastupdated field in descending order if not provided
+            sortOptions.lastupdated = -1;
+        }
+
+        // Query to fetch blogs with pagination, search filters, and sorting
+        const blogs = await Blog.find(filter)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort(sortOptions);
+
+        // Get the total number of blogs matching the search filters
+        const totalBlogs = await Blog.countDocuments(filter);
 
         // Check if any blogs exist
         if (totalBlogs === 0) {
             return res.status(404).json({ status: 'error', message: 'No blogs found' });
         }
 
-        // Return the blogs along with the total count
-        return res.status(200).json({ status: 'success', message: 'Blogs found', totalBlogs, blogs });
+        // Return the paginated, filtered, and sorted blogs along with the total count
+        return res.status(200).json({
+            status: 'success',
+            message: 'Blogs found',
+            totalBlogs,
+            totalPages: Math.ceil(totalBlogs / limit),
+            currentPage: page,
+            blogs
+        });
     } catch (error) {
         console.error('Error fetching blogs:', error);
         return res.status(500).json({ status: 'error', message: 'Internal Server Error' });

@@ -15,9 +15,11 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 1
 // Routes
 const blogRoutes = require('./routes/blog.route');
 const authRoutes = require('./routes/auth.route');
+const userprofileRoutes = require('./routes/profile.routes');
 
 app.use('/api/blogs', blogRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/userprofile', userprofileRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -27,7 +27,7 @@ This is a blog project built using Node.js and Express.js.
 ## Installation
 1. Clone the repository:
     ```bash
-    [git clone https://github.com/your-username/blog-project.git](https://github.com/Shubham2886/Blog_Node_Project.git)
+   https://github.com/Shubham2886/Blog_Node_Project.git
     ```
 
 2. Install dependencies:

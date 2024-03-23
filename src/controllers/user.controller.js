@@ -4,6 +4,46 @@ const Activity = require('../models/Activity.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
+const nodemailer = require('nodemailer');
+
+// Function to send OTP via email
+const sendOTPByEmail = async (email, otp) => {
+    // Create a Nodemailer transporter using SMTP transport
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'your_email@gmail.com', // Your Gmail address
+            pass: 'your_password' // Your Gmail password
+        }
+    });
+
+    // Email message options
+    const mailOptions = {
+        from: 'your_email@gmail.com',
+        to: email,
+        subject: 'OTP for Verification',
+        text: `Your OTP for verification is: ${otp}`
+    };
+
+    try {
+        // Send the email
+        const info = await transporter.sendMail(mailOptions);
+        console.log('OTP email sent: ' + info.response);
+    } catch (error) {
+        console.error('Error sending OTP email:', error);
+        throw error;
+    }
+};
+
+// Function to generate OTP
+const generateOTP = () => {
+    const digits = '0123456789';
+    let OTP = '';
+    for (let i = 0; i < 6; i++) {
+        OTP += digits[Math.floor(Math.random() * 10)];
+    }
+    return OTP;
+};
 
 // Controller function for user registration
 exports.registerUser = async (req, res) => {

@@ -16,10 +16,14 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 1
 const blogRoutes = require('./routes/blog.route');
 const authRoutes = require('./routes/auth.route');
 const userprofileRoutes = require('./routes/profile.routes');
+const comment = require('./routes/comment.route');
+const interaction = require('./routes/interaction.route');
 
 app.use('/api/blogs', blogRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/userprofile', userprofileRoutes);
+app.use('/api/comment', comment);
+app.use('/api/iteraction', interaction);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

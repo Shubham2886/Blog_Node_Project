@@ -128,6 +128,7 @@ exports.updateBlog = async (req, res) => {
                 username: user.username, // Assuming `user` is the logged-in user object
                 action: 'blog_update'
             });
+            await activity.save();
 
             // Save the updated blog
             await blog.save();
@@ -149,7 +150,7 @@ exports.deleteBlog = async (req, res) => {
         const blogId = req.params.id;
 
         const user = await User.findById(res.locals.userPayload.user.id);
-        
+
         // Check if the blog exists
         const blog = await Blog.findById(blogId);
         if (!blog) {
@@ -167,6 +168,7 @@ exports.deleteBlog = async (req, res) => {
             username: user.username, // Assuming `user` is the logged-in user object
             action: 'blog_delete'
         });
+        await activity.save();
 
         // Delete the blog
         await Blog.findByIdAndDelete(blogId);

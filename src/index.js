@@ -1,7 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const { connect } = require('./config/db'); // Import the connect function from your db configuration
+const path = require('path'); 
 
 const app = express();
 
@@ -11,6 +13,10 @@ connect();
 // Middleware to parse JSON and URL-encoded bodies with increased limits
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 100000 }));
+
+
+// Add CORS middleware
+app.use(cors());
 
 // Routes
 const blogRoutes = require('./routes/blog.route');
@@ -24,6 +30,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/userprofile', userprofileRoutes);
 app.use('/api/comment', comment);
 app.use('/api/iteraction', interaction);
+
+
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static('C:\\Users\\LENOVO\\OneDrive\\Desktop\\blog_project\\Blog_Node_Project\\uploads'));
+
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

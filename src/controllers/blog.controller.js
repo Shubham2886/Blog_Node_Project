@@ -50,8 +50,10 @@ exports.createBlog = async (req, res) => {
             // Access fields from req.body
             const { blogtitle, blogcategory, blogstatus, blogcontent } = req.body;
 
+            console.log(req.file);
             // File uploaded successfully, retrieve file path
             const blogimage = req.file.path;
+
 
             // Create a new blog post
             const newBlog = new Blog({

@@ -21,7 +21,7 @@ exports.getUserProfile = async (req, res) => {
 // Function to update user profile
 exports.updateUserProfile = async (req, res) => {
     try {
-        const updatedUser = await User.findByIdAndUpdate(req.user.id, req.body, { new: true });
+        const updatedUser = await User.findByIdAndUpdate(res.locals.userPayload.user.id, req.body, { new: true });
         if (!updatedUser) {
             return res.status(404).json({ status: 'error', message: 'User not found' });
         }

@@ -78,6 +78,13 @@ This is a blog project built using Node.js and Express.js.
 - **Register a user:** `POST /register`
 - **Login:** `POST /login`
 
+- ## Profile API
+- **Get user profile:** `GET /profile`
+- **Update user profile:** `PATCH /profile`
+- **Delete user profile:** `DELETE /profile`
+- **Get user's blogs:** `GET /profile/blogs`
+- **Get user's activity:** `GET /profile/activity`
+
 ## Contributing
 Contributions are welcome! If you find any bugs or want to suggest new features, please open an issue or submit a pull request.
 

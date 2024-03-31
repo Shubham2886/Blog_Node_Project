@@ -29,7 +29,7 @@ app.use('/api/blogs', blogRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/userprofile', userprofileRoutes);
 app.use('/api/comment', comment);
-app.use('/api/iteraction', interaction);
+app.use('/api/int', interaction);
 
 
 // Serve static files from the 'uploads' directory

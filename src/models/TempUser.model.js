@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema(
+const TempUserSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -16,12 +16,12 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    login_otp: {
+    otp: {
       type: String,
-      default: null, // Stores the login OTP
+      required: true,
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("TempUser", TempUserSchema);

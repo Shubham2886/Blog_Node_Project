@@ -6,6 +6,9 @@ const verifyToken = require('../middlewares/user_auth');
 // Like a blog
 router.post('/blogs/:id/like', verifyToken, interactionController.likeBlog);
 
+//check like or not by user 
+router.get('/blogs/:id/like', verifyToken, interactionController.checkLikedBlog);
+
 // Share a blog
 router.post('/blogs/:id/share', verifyToken, interactionController.shareBlog);
 
@@ -14,6 +17,6 @@ router.post('/blogs/:id/bookmark', verifyToken, interactionController.bookmarkBl
 
 
 // Route to get likes for a blog
-router.get('/blogs/:id/like', interactionController.getLikesForBlog);
+router.get('/blogs/:id/all-like',interactionController.getLikesCountForBlog);
 
 module.exports = router;

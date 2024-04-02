@@ -309,7 +309,12 @@ exports.verifyLoginOTP = async (req, res) => {
                 res.json({
                     status: "ok",
                     message: "Login Successfully.",
-                    jwt_token: token
+                    jwt_token: token,
+                    user: {
+                        id: user.id,
+                        email: user.email
+                        // Add other user properties as needed
+                    }
                 });
             }
         );

@@ -96,7 +96,6 @@ exports.updateBlog = async (req, res) => {
         const user = await User.findById(res.locals.userPayload.user.id);
         if (!user) return res.status(404).json({ status: 'error', message: 'User not found.' });
 
-
         // Check if the blog exists
         const blog = await Blog.findById(blogId);
         if (!blog) {
@@ -114,16 +113,17 @@ exports.updateBlog = async (req, res) => {
             }
 
             // File uploaded successfully, retrieve file path
-            const blogimage = req.file.path;
+            const blogimage = req.file ? req.file.path : null;
 
             // Extract updated data from the request body
             const { blogtitle, blogcategory, blogcontent, blogstatus } = req.body;
 
-            // Update the blog fields
+            // Update the blog fields if they are provided in the request
             if (blogtitle) blog.blogtitle = blogtitle;
             if (blogcategory) blog.blogcategory = blogcategory;
             if (blogcontent) blog.blogcontent = blogcontent;
             if (blogstatus) blog.blogstatus = blogstatus;
+            if (blogimage) blog.blogimage = blogimage;
 
             const activity = new Activity({
                 userid: user._id,
@@ -132,6 +132,7 @@ exports.updateBlog = async (req, res) => {
             });
             await activity.save();
 
+            console.log(blog);
             // Save the updated blog
             await blog.save();
 
@@ -144,6 +145,63 @@ exports.updateBlog = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+// exports.updateBlog = async (req, res) => {
+//     try {
+//         // Retrieve the blog ID from the request parameters
+//         const blogId = req.params.id;
+
+//         const user = await User.findById(res.locals.userPayload.user.id);
+//         if (!user) return res.status(404).json({ status: 'error', message: 'User not found.' });
+
+
+//         // Check if the blog exists
+//         const blog = await Blog.findById(blogId);
+//         if (!blog) {
+//             return res.status(404).json({ message: 'Blog not found' });
+//         }
+
+//         // Use the upload middleware for handling file uploads
+//         upload.single('blogimage')(req, res, async function (err) {
+//             if (err instanceof multer.MulterError) {
+//                 // A Multer error occurred when uploading
+//                 return res.status(400).json({ error: 'File upload error' });
+//             } else if (err) {
+//                 // An unknown error occurred when uploading
+//                 return res.status(500).json({ error: 'Internal Server Error' });
+//             }
+
+//             // File uploaded successfully, retrieve file path
+//             const blogimage = req.file.path;
+
+//             // Extract updated data from the request body
+//             const { blogtitle, blogcategory, blogcontent, blogstatus } = req.body;
+
+//             // Update the blog fields
+//             if (blogtitle) blog.blogtitle = blogtitle;
+//             if (blogcategory) blog.blogcategory = blogcategory;
+//             if (blogcontent) blog.blogcontent = blogcontent;
+//             if (blogstatus) blog.blogstatus = blogstatus;
+
+//             const activity = new Activity({
+//                 userid: user._id,
+//                 username: user.username, // Assuming `user` is the logged-in user object
+//                 action: 'blog_update'
+//             });
+//             await activity.save();
+
+//             // Save the updated blog
+//             await blog.save();
+
+//             // Respond with success message and updated blog data
+//             res.status(200).json({ message: 'Blog updated successfully', blog });
+//         });
+//     } catch (error) {
+//         // Handle errors
+//         console.error('Error updating blog:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
 
 // Controller function to delete an existing blog
 exports.deleteBlog = async (req, res) => {

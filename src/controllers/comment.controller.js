@@ -5,7 +5,7 @@ const Comment = require('../models/comment.model');
 // Controller function to add a comment to a blog
 exports.addComment = async (req, res) => {
     try {
-
+        console.log(req.body.content);
         // Extract the blog ID from the request parameters
         const blogId = req.params.id;
 
@@ -81,18 +81,20 @@ exports.deleteComment = async (req, res) => {
 // Function to get all comments for a particular blog
 exports.getAllCommentsForBlog = async (req, res) => {
     try {
-
         // Perform user existence check
         const user = await User.findById(res.locals.userPayload.user.id);
         if (!user) return res.status(404).json({ status: 'error', message: 'User not found.' });
 
         const blogId = req.params.blogId; // Extract the blogId from the request parameters
         const comments = await Comment.find({ blogId: blogId }).populate('userId', 'username'); // Populate the userId field with the username
+
+        if (comments.length === 0) {
+            return res.status(404).json({ status: 'error', message: 'No comments found for this blog.' });
+        }
+
         res.status(200).json({ status: 'success', data: comments });
     } catch (error) {
         console.error('Error fetching comments:', error);
         res.status(500).json({ status: 'error', message: 'Internal Server Error' });
     }
 };
-
-

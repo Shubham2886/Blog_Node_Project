@@ -1,6 +1,7 @@
 const Blog = require('../models/Blogs.model');
 const User = require('../models/User.model');
 const Comment = require('../models/comment.model');
+const Activity = require('../models/Activity.model');
 
 // Controller function to add a comment to a blog
 exports.addComment = async (req, res) => {
@@ -19,6 +20,13 @@ exports.addComment = async (req, res) => {
             userId: user._id, // Assuming userId is obtained from the authenticated user
             content: req.body.content // Assuming the content is sent in the request body
         });
+        const activity = new Activity({
+            userid: user._id,
+            username: user.username, // Assuming `user` is the logged-in user object
+            blogid: blogId,
+            action: 'blog_comment'
+        });
+        await activity.save();
 
         // Save the new comment
         await newComment.save();
@@ -47,6 +55,15 @@ exports.updateComment = async (req, res) => {
             return res.status(404).json({ status: 'error', message: 'Comment not found' });
         }
 
+        const activity = new Activity({
+            userid: user._id,
+            username: user.username, // Assuming `user` is the logged-in user object
+            blogid: blogId,
+            commentid: commentId,
+            action: 'blog_update_comment'
+        });
+        await activity.save();
+
         res.status(200).json({ status: 'success', message: 'comment updated', data: updatedComment });
     } catch (error) {
         console.error('Error updating comment:', error);
@@ -70,6 +87,16 @@ exports.deleteComment = async (req, res) => {
         if (!deletedComment) {
             return res.status(404).json({ status: 'error', message: 'Comment not found' });
         }
+
+        const activity = new Activity({
+            userid: user._id,
+            username: user.username, // Assuming `user` is the logged-in user object
+            blogid: blogId,
+            commentid: commentId,
+            action: 'blog_delete_comment'
+        });
+        await activity.save();
+
 
         res.status(200).json({ status: 'success', message: 'Comment deleted successfully' });
     } catch (error) {

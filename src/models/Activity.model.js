@@ -8,10 +8,16 @@ const activitySchema = new mongoose.Schema({
     },
     action: {
         type: String,
-        enum: ['login', 'register', 'logout', 'blog_create', 'blog_update', 'blog_delete'], // Example actions, you can add more
+        enum: ['login', 'register', 'blog_create', 'blog_update', 'blog_delete','blog_comment','blog_update_comment','blog_delete_comment'], // Example actions, you can add more
         required: true
     },
     username:{
+        type: String
+    },
+    blogid:{
+        type: String
+    },
+    commentid:{
         type: String
     },
     timestamp: {

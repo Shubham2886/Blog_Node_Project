@@ -13,14 +13,14 @@ const sendOTPByEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'your_email@gmail.com', // Your Gmail address
-            pass: 'your_password' // Your Gmail password
+            user: process.env.GMAIL_USERNAME,
+            pass: process.env.GMAIL_PASSWORD
         }
     });
 
     // Email message options
     const mailOptions = {
-        from: 'your_email@gmail.com',
+        from: process.env.GMAIL_USERNAME,
         to: email,
         subject: 'OTP for Verification',
         text: `Your OTP for verification is: ${otp}`
@@ -78,7 +78,7 @@ exports.registerUser = async (req, res) => {
         await tempUser.save();
 
         // Send OTP via email
-        //await sendOTPByEmail(email, otp);
+        await sendOTPByEmail(email, otp);
 
         res.json({ message: "OTP sent to email for verification" });
     } catch (err) {
@@ -180,7 +180,7 @@ exports.loginUser = async (req, res) => {
         const otp = generateOTP();
 
         // Send OTP via email
-        //await sendOTPByEmail(email, otp);
+        await sendOTPByEmail(email, otp);
 
         // Store the OTP in the user model
         user.login_otp = otp;

@@ -25,8 +25,9 @@ const blogSchema = new mongoose.Schema({
         default: 'active'
     },
     userid: {
-        type: String,
-         required: true
+        type: mongoose.Schema.Types.ObjectId, // Define as ObjectId type
+        ref: 'User', // Reference the User model
+        required: true
     },
     lastupdated: {
         type: Date,

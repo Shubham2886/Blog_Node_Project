@@ -217,7 +217,8 @@ exports.getAllBlogs = async (req, res) => {
         const blogs = await Blog.find(filter)
             .skip((page - 1) * limit)
             .limit(limit)
-            .sort(sortOptions);
+            .sort(sortOptions)
+            .populate('userid', 'username'); 
 
         // Get the total number of blogs matching the search filters
         const totalBlogs = await Blog.countDocuments(filter);

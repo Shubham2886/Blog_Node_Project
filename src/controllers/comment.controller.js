@@ -1,6 +1,6 @@
 const Blog = require('../models/Blogs.model');
 const User = require('../models/User.model');
-const Comment = require('../models/comment.model');
+const Comment = require('../models/Comment.model');
 const Activity = require('../models/Activity.model');
 
 // Controller function to add a comment to a blog

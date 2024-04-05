@@ -1,6 +1,6 @@
 const Blog = require('../models/Blogs.model');
 const User = require('../models/User.model');
-const Interaction = require('../models/interaction.model');
+const Interaction = require('../models/Interaction.model');
 
 // Controller function to like a blog
 exports.likeBlog = async (req, res) => {

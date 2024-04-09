@@ -46,7 +46,7 @@ This is a blog project built using Node.js and Express.js.
     ```
 
 ## Usage
-- Visit [http://localhost:3000](http://localhost:3000) in your web browser to access the blog application.
+- Visit [https://blog-node-project.vercel.app](https://blog-node-project.vercel.app) in your web browser to access the blog application.
 - Register an account or log in if you already have an account.
 - Create, view, update, or delete your blogs.
 - Comment on blogs, like, share, or bookmark them.

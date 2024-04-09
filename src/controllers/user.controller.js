@@ -60,6 +60,7 @@ exports.registerUser = async (req, res) => {
     try {
         // Check if the user already exists
         let user = await User.findOne({ $or: [{ email }, { username }] });
+        console.log(user)
         if (user) {
             let reason = user.email === email ? "email" : "username";
             return res.status(400).json({ message: "User already exists", reason });
@@ -68,6 +69,12 @@ exports.registerUser = async (req, res) => {
         // Generate OTP
         const otp = generateOTP();
 
+        const existingTempUser = await TempUser.findOne({ $or: [{ email }, { username }] });
+        if (existingTempUser) {
+            // Handle the case where the email or username already exists in TempUser
+            // For example, return an error response to the client
+            return res.status(400).json({ message: "User already exists in temporary collection", reason: existingTempUser.email === email ? "email" : "username" });
+        }
         // Save user data along with OTP to temporary model
         const tempUser = new TempUser({
             username,
@@ -245,7 +252,7 @@ exports.verifyLoginOTP = async (req, res) => {
                         // Add other user properties as needed
                     }
                 });
-                 const activity = new Activity({
+                const activity = new Activity({
                     userid: user._id,
                     username: user.username, // Assuming `user` is the logged-in user object
                     action: 'login'
@@ -363,3 +370,74 @@ exports.verifyLoginOTP = async (req, res) => {
 // };
 
 
+
+//resend otp funtinalities ⬇️
+exports.resendLoginOTP = async (req, res) => {
+    try {
+        // Check if there are any validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        const { email } = req.body;
+
+        // Find the user in the User collection
+        const user = await User.findOne({ email });
+
+        // If user not found, return error
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        // Generate OTP
+        const otp = generateOTP();
+
+        // Send OTP via email
+        await sendOTPByEmail(email, otp);
+
+        // Update the user's OTP
+        user.login_otp = otp;
+        await user.save();
+
+        // Return success message
+        res.json({ message: "OTP resent to email for login" });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.resendRegisterOTP = async (req, res) => {
+    try {
+        // Check if there are any validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        const { email } = req.body;
+
+        // Find the user in the TempUser collection
+        const user = await TempUser.findOne({ email });
+
+        // If user not found, return error
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        // Generate OTP
+        const otp = generateOTP();
+
+        // Send OTP via email
+        await sendOTPByEmail(email, otp);
+
+        // Update the user's OTP
+        user.otp = otp;
+        await user.save();
+
+        // Return success message
+        res.json({ message: "OTP resent to email for registration" });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};

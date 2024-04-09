@@ -9,6 +9,9 @@ router.post('/verify-register-otp', authController.verifyOTPAndRegisterUser);
 router.post('/login', authController.loginUser);
 router.post('/verify-login-otp', authController.verifyLoginOTP);
 
+//resend routes
+router.post('/resend-login-otp', authController.resendLoginOTP);
+router.post('/resend-register-otp', authController.resendRegisterOTP);
 
 
 

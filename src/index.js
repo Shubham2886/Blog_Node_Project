@@ -14,13 +14,9 @@ connect();
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 100000 }));
 
-// Allow requests from a specific origin
-const corsOptions = {
-    origin: 'https://blog-node-project.vercel.app',
-  };
 
 // Add CORS middleware
-app.use(cors(corsOptions));
+app.use(cors());
 
 // Routes
 const blogRoutes = require('./routes/blog.route');

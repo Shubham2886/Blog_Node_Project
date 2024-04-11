@@ -103,6 +103,29 @@ exports.bookmarkBlog = async (req, res) => {
     }
 };
 
+// Controller function to get all bookmarked blogs
+exports.getBookmarkBlog = async (req, res) => {
+    try {
+        // Get the user ID from the request or from the authenticated user
+        const userId = res.locals.userPayload.user.id; // Assuming userId is obtained from the authenticated user
+
+        // Find all bookmark interactions for the user
+        const bookmarks = await Interaction.find({ userId: userId, type: 'bookmark' });
+
+        // Extract the IDs of bookmarked blogs
+        const bookmarkedBlogIds = bookmarks.map(bookmark => bookmark.blogId);
+
+        // Find the bookmarked blogs
+        const bookmarkedBlogs = await Blog.find({ _id: { $in: bookmarkedBlogIds } });
+
+        // Respond with the bookmarked blogs
+        res.status(200).json({ status: 'success', bookmarkedBlogs });
+    } catch (error) {
+        console.error('Error retrieving bookmarked blogs:', error);
+        res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
+};
+
 // Function to get likes for a blog
 exports.getLikesCountForBlog = async (req, res) => {
     const blogId = req.params.id;

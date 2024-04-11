@@ -15,6 +15,10 @@ router.post('/blogs/:id/share', verifyToken, interactionController.shareBlog);
 // Bookmark a blog
 router.post('/blogs/:id/bookmark', verifyToken, interactionController.bookmarkBlog);
 
+// Route to get all bookmarked blogs for a user
+router.get('/bookmarked-blogs', verifyToken, interactionController.getBookmarkBlog);
+
+
 
 // Route to get likes for a blog
 router.get('/blogs/:id/all-like',interactionController.getLikesCountForBlog);

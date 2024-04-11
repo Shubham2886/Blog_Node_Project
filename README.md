@@ -1,7 +1,7 @@
 # Blog Project
 
 ## Introduction
-This is a blog project built using Node.js and Express.js.
+This blog project, constructed with Node.js and Express.js, has been enhanced to incorporate functionalities such as S3 bucket integration and deployment on Vercel.
 
 ## Table of Contents
 1. [Introduction](#introduction)
